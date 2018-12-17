@@ -1,4 +1,4 @@
-package com.danielrocks.function;
+package com.danielrocks.function.cosmos.output;
 
 import java.util.*;
 import com.microsoft.azure.functions.annotation.*;

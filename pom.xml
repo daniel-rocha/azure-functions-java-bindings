@@ -14,8 +14,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <azure.functions.maven.plugin.version>1.0.0-beta-7</azure.functions.maven.plugin.version>
-        <azure.functions.java.library.version>1.0.0-beta-5</azure.functions.java.library.version>
+        <azure.functions.maven.plugin.version>1.2.0</azure.functions.maven.plugin.version>
+        <azure.functions.java.library.version>1.2.0</azure.functions.java.library.version>
         <functionAppName>azure-functions-java-bindings-1540277090843</functionAppName>
         <functionAppRegion>westus</functionAppRegion>
         <stagingDirectory>${project.build.directory}/azure-functions/${functionAppName}</stagingDirectory>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>com.microsoft.azure.functions</groupId>
             <artifactId>azure-functions-java-library</artifactId>
-        </dependency>
+        </dependency>   
 
         <!-- Test -->
         <dependency>
