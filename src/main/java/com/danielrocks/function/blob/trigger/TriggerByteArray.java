@@ -16,10 +16,7 @@ import com.microsoft.azure.functions.annotation.BlobTrigger;
  */
 
 public class TriggerByteArray {
-    /**
-     * This function listens for changes in the Items collection and gets passed the documents
-     * that have changed (added or updated)
-     */  
+
     @FunctionName("blobprocessor")
     public void run(
       @BlobTrigger(name = "file",

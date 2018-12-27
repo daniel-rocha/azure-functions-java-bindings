@@ -17,10 +17,7 @@ import com.microsoft.azure.functions.annotation.BlobTrigger;
  */
 
 public class TriggerString {
-    /**
-     * This function listens for changes in the Items collection and gets passed the documents
-     * that have changed (added or updated)
-     */
+
     @FunctionName("blobprocessorString")
     public void run(
       @BlobTrigger(name = "file",
