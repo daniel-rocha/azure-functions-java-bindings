@@ -17,19 +17,21 @@ import com.microsoft.azure.functions.annotation.BlobTrigger;
 
 public class TriggerByteArray {
 
-    @FunctionName("blobprocessor")
-    public void run(
-      @BlobTrigger(name = "file",
-                   dataType = "binary",
-                   path = "myblob/{name}",
-                   connection = "Storage_Account_Connection_String") byte[] content,
-      @BindingName("name") String filename,
-      final ExecutionContext context) {
-        // log 
-        context.getLogger().info("Name: " + filename + " Size: " + content.length + " bytes");
+  @FunctionName("blobprocessor")
+  public void run(
+    @BlobTrigger(
+      name = "file",
+      dataType = "binary",
+      path = "myblob/{name}",
+      connection = "Storage_Account_Connection_String") 
+    byte[] content,
+    @BindingName("name") String filename,
+    final ExecutionContext context) {
+      // log 
+      context.getLogger().info("Name: " + filename + " Size: " + content.length + " bytes");
 
-        // do something with blob
-        String file = new String(content, StandardCharsets.UTF_8);
-        context.getLogger().info("File content is: " + file);
-    }
+      // do something with blob
+      String file = new String(content, StandardCharsets.UTF_8);
+      context.getLogger().info("File content is: " + file);
+  }
 }

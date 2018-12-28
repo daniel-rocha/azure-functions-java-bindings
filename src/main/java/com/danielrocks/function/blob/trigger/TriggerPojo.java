@@ -18,18 +18,20 @@ import com.microsoft.azure.functions.annotation.FunctionName;
 
 public class TriggerPojo {
   
-    @FunctionName("blobprocessorPojo")
-    public void run(
-      @BlobTrigger(name = "file",
-                   dataType = "",
-                   path = "myblob/{name}",
-                   connection = "Storage_Account_Connection_String") ToDoItem content,
-      @BindingName("name") String filename,
-      final ExecutionContext context) {
-        // log 
-        context.getLogger().info("Name: " + filename);
+  @FunctionName("blobprocessorPojo")
+  public void run(
+    @BlobTrigger(
+      name = "file",
+      dataType = "",
+      path = "myblob/{name}",
+      connection = "Storage_Account_Connection_String") 
+    ToDoItem content,
+    @BindingName("name") String filename,
+    final ExecutionContext context) {
+      // log 
+      context.getLogger().info("Name: " + filename);
 
-        // do something with blob
-        context.getLogger().info("ToDoItem is: " + content.getId() + " - " + content.getDescription());
-    }
+      // do something with blob
+      context.getLogger().info("ToDoItem is: " + content.getId() + " - " + content.getDescription());
+  }
 }

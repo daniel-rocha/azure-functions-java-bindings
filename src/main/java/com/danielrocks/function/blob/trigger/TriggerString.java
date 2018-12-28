@@ -1,7 +1,5 @@
 package com.danielrocks.function.blob.trigger;
 
-import java.nio.charset.StandardCharsets;
-
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.BindingName;
@@ -18,15 +16,17 @@ import com.microsoft.azure.functions.annotation.BlobTrigger;
 
 public class TriggerString {
 
-    @FunctionName("blobprocessorString")
-    public void run(
-      @BlobTrigger(name = "file",
-                   dataType = "string",
-                   path = "myblob/{name}",
-                   connection = "Storage_Account_Connection_String") String content,
-      @BindingName("name") String filename,
-      final ExecutionContext context) {
-        // log 
-        context.getLogger().info("Name: " + filename + " Content: " + content);
-    }
+  @FunctionName("blobprocessorString")
+  public void run(
+    @BlobTrigger(
+      name = "file",
+      dataType = "string",
+      path = "myblob/{name}",
+      connection = "Storage_Account_Connection_String") 
+    String content,
+    @BindingName("name") String filename,
+    final ExecutionContext context) {
+      // log 
+      context.getLogger().info("Name: " + filename + " Content: " + content);
+  }
 }
