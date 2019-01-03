@@ -23,6 +23,10 @@ import com.microsoft.azure.functions.annotation.StorageAccount;
  *
  */
 
+ /*
+  * Provided that you've set up your local environment with the setupenvironment.ps1 script, you can try it out using http://localhost:7071/api/getBlobSizeHttp?file=testdata.txt 
+  */
+
 public class HttpTriggerBlobInput {
 
   @FunctionName("getBlobSizeHttp")
@@ -38,9 +42,17 @@ public class HttpTriggerBlobInput {
       path = "samples-workitems/{Query.file}") 
     byte[] content,
     final ExecutionContext context) {
-      // build HTTP response with size of requested blob
+
+      //extract information about the requested blob
+      String filename = request.getQueryParameters().get("file");
+      Integer fileLength = content.length;
+
+      //Construct a body for the response
+      String body = "The size of \"" + filename + "\" is: " + fileLength + " bytes";
+      
+      // build HTTP response
       return request.createResponseBuilder(HttpStatus.OK)
-        .body("The size of \"" + request.getQueryParameters().get("file") + "\" is: " + content.length + " bytes")
+        .body(body)
         .build();
   }
 }
