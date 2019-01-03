@@ -24,6 +24,8 @@ $storageContainerName = "samples-workitems"
 New-AzStorageContainer -Name $storageContainerName -Permission Container -Context $storageAccount.Context
 Set-AzStorageBlobContent -File "./testdata.txt" -Blob "testdata.txt" -Container $storageContainerName -Context $storageAccount.Context -Force
 
+New-AzStorageContainer -Name "samples-workitems-outputs" -Permission Container -Context $storageAccount.Context
+
 $storageQueueName = "myqueue-items-sample"
 $storageQueue = New-AzStorageQueue -Name $storageQueueName -Context $storageAccount.Context
 

@@ -23,7 +23,7 @@ public class TriggerPojo {
     @BlobTrigger(
       name = "file",
       dataType = "",
-      path = "myblob/{name}",
+      path = "samples-workitems/{name}",
       connection = "Storage_Account_Connection_String") 
     ToDoItem content,
     @BindingName("name") String filename,
