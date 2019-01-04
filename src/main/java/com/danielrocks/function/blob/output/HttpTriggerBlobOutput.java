@@ -54,8 +54,11 @@ public class HttpTriggerBlobOutput {
       // Save blob to outputItem
       outputItem.setValue(new String(content, StandardCharsets.UTF_8));
 
-      String body = "The size of \"" + request.getQueryParameters().get("file") + "\" is: " + content.length + " bytes. \n";
-            // build HTTP response with size of requested blob
+      //create response body with size of requested blob
+      String fileName = request.getQueryParameters().get("file");
+      String body = "The size of \"" + fileName + "\" is: " + content.length + " bytes. \n";
+      
+      // do HTTP response 
       return request.createResponseBuilder(HttpStatus.OK)
         .body(body)
         .build();

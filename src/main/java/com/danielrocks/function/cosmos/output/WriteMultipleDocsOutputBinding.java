@@ -37,7 +37,7 @@ public class WriteMultipleDocsOutputBinding {
     /**
      * This function listens at endpoint "/api/WriteMultipleDocsOutputBinding". Two ways to invoke it using "curl" command in bash:
      * 1. curl -d "HTTP Body" {your host}/api/WriteMultipleDocsOutputBinding&desc={description}
-     * 2. curl "{your host}/api/WriteOneDoc?desc={description}"
+     * 2. curl "{your host}/api/WriteMultipleDocsOutputBinding?desc={description}"
      */
     @FunctionName("WriteMultipleDocsOutputBinding")
     public HttpResponseMessage run(

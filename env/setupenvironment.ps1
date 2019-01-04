@@ -1,42 +1,58 @@
-Connect-AzAccount
+az login
 
-$resourceGroup = "functions-java-sample-resource-group"
+$resourceGroup = "functions-java-samples-resource-group"
 $location = "westus"
-$storageAccountName =  ("functionsample" + (New-Guid).ToString() -replace "-", "").Substring(0,24)
-
-New-AzResourceGroup -Name $resourceGroup -Location $location
-
-
-$storageAccount = New-AzStorageAccount -ResourceGroupName $resourceGroup `
-  -Name $storageAccountName `
-  -Location $location `
-  -SkuName Standard_LRS `
-  -Kind StorageV2 
-
-$storageAccountKey = `
-  (Get-AzStorageAccountKey `
-  -ResourceGroupName $resourceGroup `
-  -Name $storageAccountName).Value[0]
-  
-
-$storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=" + $storageAccountName + ";AccountKey=" + $storageAccountKey;
+$uniqueAppendix = (New-Guid).ToString() -replace "-", "";
+$storageAccountName =  ("functionsample" + $uniqueAppendix).Substring(0,24)
 $storageContainerName = "samples-workitems"
-New-AzStorageContainer -Name $storageContainerName -Permission Container -Context $storageAccount.Context
-Set-AzStorageBlobContent -File "./testdata.txt" -Blob "testdata.txt" -Container $storageContainerName -Context $storageAccount.Context -Force
-
-New-AzStorageContainer -Name "samples-workitems-outputs" -Permission Container -Context $storageAccount.Context
-
+$testdataFileName = "testdata.json";
+$testdataFilePath = "./" + $testdataFileName;
+$cosmosDBAccountName = ("functionsamples" + $uniqueAppendix).Substring(0,24);
+$cosmosDBName = "ToDoList";
+$cosmosDBCollectionName = "Items";
 $storageQueueName = "myqueue-items-sample"
-$storageQueue = New-AzStorageQueue -Name $storageQueueName -Context $storageAccount.Context
 
-# Create a new message using a constructor of the CloudQueueMessage class
-$queueMessage = New-Object -TypeName Microsoft.WindowsAzure.Storage.Queue.CloudQueueMessage `
-  -ArgumentList "testdata.txt"
+#create resource group
+az group create -n $resourceGroup -l $location
 
-  # Add a new message to the queue
-$storageQueue.CloudQueue.AddMessageAsync($QueueMessage)
+#create storage account
+az storage account create -n $storageAccountName -l $location -g $resourceGroup --sku Standard_LRS --kind StorageV2
 
+#get storage account connection string
+$storageAccountConnectionString = (az storage account show-connection-string -n $storageAccountName -g $resourceGroup | ConvertFrom-Json).connectionString
 
+#create storage account containers
+az storage container create -n $storageContainerName --connection-string $storageAccountConnectionString
+az storage container create -n "samples-workitems-outputs" --connection-string $storageAccountConnectionString
+
+#upload test dat file
+az storage blob upload -n $testdataFileName -f $testdataFilePath -c $storageContainerName --connection-string $storageAccountConnectionString
+
+#create storage queues
+az storage queue create -n $storageQueueName --connection-string $storageAccountConnectionString
+
+#add a message to the queue
+$encodedMessageContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($testdataFileName))
+az storage message put --content $encodedMessageContent --queue-name $storageQueueName --connection-string $storageAccountConnectionString
+
+#create the cosmos db 
+az cosmosdb create -n $cosmosDBAccountName -g $resourceGroup 
+$cosmosDBAccountKey = (az cosmosdb list-keys -n $cosmosDBAccountName -g $resourceGroup | ConvertFrom-Json).primaryMasterKey
+
+#create database
+az cosmosdb database create -d $cosmosDBName -n $cosmosDBAccountName -g $resourceGroup
+
+#create collections
+az cosmosdb collection create -c $cosmosDBCollectionName -d $cosmosDBName -n $cosmosDBAccountName -g $resourceGroup
+az cosmosdb collection create -c "leases" -d $cosmosDBName -n $cosmosDBAccountName -g $resourceGroup
+
+#create cosmosdb connection string
+$cosmosDbConnectionString = "AccountEndpoint=https://" + $cosmosDBAccountName + ".documents.azure.com:443/;AccountKey=" + $cosmosDBAccountKey + ";"
+
+#generate local settings file
 $settingsFileTemplate = Get-Content template.local.settings.json
-$settingsFileTemplate -replace "{storageConnectionString}", $storageConnectionString | Set-Content ../local.settings.json
+$settingsFileTemplate `
+  -replace "{storageConnectionString}", $storageAccountConnectionString `
+  -replace "{cosmosDbConnectionString}", $cosmosDbConnectionString `
+  | Set-Content ../local.settings.json
 
