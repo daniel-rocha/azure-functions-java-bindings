@@ -20,7 +20,7 @@ import com.microsoft.azure.functions.annotation.StorageAccount;
  * and passes its contents to the function as a byte[].
  * 
  * The return value of the function is written to the  
- * file in the 'myblob' storage container described in the BlobOutput annotation.
+ * file in the 'samples-workitems-outputs' storage container described in the BlobOutput annotation.
  *
  */
 
@@ -30,7 +30,7 @@ public class QueueTriggerBlobOutput {
   @StorageAccount("Storage_Account_Connection_String")
   @BlobOutput(
     name = "target", 
-    path = "myblob/{queueTrigger}-Copy")
+    path = "samples-workitems-outputs/{queueTrigger}-Copy")
   public String copyBlobQueue(
     @QueueTrigger(
       name = "filename", 

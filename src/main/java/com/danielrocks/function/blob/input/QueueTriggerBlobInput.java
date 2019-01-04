@@ -16,6 +16,13 @@ import com.microsoft.azure.functions.annotation.StorageAccount;
  *
  */
 
+
+ /*
+  * Provided that you've set up your local environment with the setupenvironment.ps1 script, 
+  * you can try it out by adding a message to the myqueue-items-sample queue with the payload "testdata.txt"
+  * Tip: Use the Azure Storage Explorer to add messages to your queue
+  */
+
 public class QueueTriggerBlobInput {
 
   @FunctionName("getBlobSize")

@@ -28,7 +28,7 @@ import com.microsoft.azure.functions.annotation.StorageAccount;
  * 
  * The BlobOutput annotation binds to OutputBinding, which is then used
  * by the function to write the contents of the input file to a 
- * file in the 'myblob' storage container.
+ * file in the 'samples-workitems-outputs' storage container.
  *
  */
 
@@ -48,15 +48,19 @@ public class HttpTriggerBlobOutput {
     byte[] content,
     @BlobOutput(
       name = "target", 
-      path = "myblob/{Query.file}-CopyViaHttp")
+      path = "samples-workitems-outputs/{Query.file}-CopyViaHttp")
     OutputBinding<String> outputItem,
     final ExecutionContext context) {
       // Save blob to outputItem
       outputItem.setValue(new String(content, StandardCharsets.UTF_8));
 
-      // build HTTP response with size of requested blob
+      //create response body with size of requested blob
+      String fileName = request.getQueryParameters().get("file");
+      String body = "The size of \"" + fileName + "\" is: " + content.length + " bytes. \n";
+      
+      // do HTTP response 
       return request.createResponseBuilder(HttpStatus.OK)
-        .body("The size of \"" + request.getQueryParameters().get("file") + "\" is: " + content.length + " bytes")
+        .body(body)
         .build();
   }
 }

@@ -22,7 +22,7 @@ public class TriggerByteArray {
     @BlobTrigger(
       name = "file",
       dataType = "binary",
-      path = "myblob/{name}",
+      path = "samples-workitems/{name}",
       connection = "Storage_Account_Connection_String") 
     byte[] content,
     @BindingName("name") String filename,

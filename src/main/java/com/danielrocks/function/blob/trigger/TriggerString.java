@@ -21,7 +21,7 @@ public class TriggerString {
     @BlobTrigger(
       name = "file",
       dataType = "string",
-      path = "myblob/{name}",
+      path = "samples-workitems/{name}",
       connection = "Storage_Account_Connection_String") 
     String content,
     @BindingName("name") String filename,
