@@ -75,7 +75,7 @@ Our examples rely on some data to be placed in the right places, for the binding
     C:> cd <project path>\env
     ```
     ```shell
-    C:> setupenvironment.ps1
+    C:> setupenvironment.ps1 -group <myresourcegroup> -s <subscription name>
     ```
     
     **Mac OSX and Linux** 

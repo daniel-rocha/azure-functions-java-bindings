@@ -1,5 +1,5 @@
 # 
-# usage: setupdata.ps1 -group <myresourcegroup> -s <subscription name>
+# usage: setupenvironment.ps1 -group <myresourcegroup> -s <subscription name>
 
 param (
   [Parameter(Mandatory=$true)][string]$subscription,
