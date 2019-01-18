@@ -27,7 +27,7 @@ The first step is to deploy the infrastructure components that will support the 
 
 - Click the "Deploy to Azure" button below. You can then fill out the required parameters, and Azure Resource Manager will deploy all services that need to be in place for the examples to run.
 
-	<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdaniel-rocha%2Fazure-functions-java-bindings%2Farm-development%2Fazuredeploy.json" target="_blank">
+	<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdaniel-rocha%2Fazure-functions-java-bindings%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
@@ -41,7 +41,7 @@ The first step is to deploy the infrastructure components that will support the 
     az group deployment create \
   --name ExampleDeployment \
   --resource-group ExampleResourceGroup \
-  --template-uri "https://raw.githubusercontent.com/daniel-rocha/azure-functions-java-bindings/arm-development/azuredeploy.json" \
+  --template-uri "https://raw.githubusercontent.com/daniel-rocha/azure-functions-java-bindings/master/azuredeploy.json" \
   --parameters "Function App Name"=<yourappname> "Database Account Name"=<yourdatabasename> "storageAccountName"=<yourstorageaccountname>
   ```
 
