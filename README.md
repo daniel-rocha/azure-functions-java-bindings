@@ -30,9 +30,6 @@ The first step is to deploy the infrastructure components that will support the 
 	<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdaniel-rocha%2Fazure-functions-java-bindings%2Farm-development%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
-<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdaniel-rocha%2Fazure-functions-java-bindings%2Farm-development%2Fazuredeploy.json" target="_blank">
-    <img src="http://armviz.io/visualizebutton.png"/>
-</a>
 
 - You can also deploy the support infrastructure from the Azure CLI, by executing the following commands: 
 
