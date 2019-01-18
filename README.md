@@ -78,7 +78,10 @@ Our examples rely on some data to be placed in the right places, for the binding
     C:> setupenvironment.ps1 -group <myresourcegroup> -s <subscription name>
     ```
     
-    **Mac OSX and Linux** 
+    **Mac OSX and Linux**
+
+    This script requires Python 3 to be installed.
+ 
     ```shell
     $ cd <project path>/env
     ```
