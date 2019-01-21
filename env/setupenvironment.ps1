@@ -1,55 +1,68 @@
+# 
+# usage: setupenvironment.ps1 -group <myresourcegroup> -s <subscription name>
+
+param (
+  [Parameter(Mandatory=$true)][string]$subscription,
+  [Parameter(Mandatory=$true)][string]$group
+)
+
+Write-Output "ResourceGroup: $group Subscription: $subscription"
+
 az login
 
-$resourceGroup = "functions-java-samples-resource-group"
-$location = "westus"
-$uniqueAppendix = (New-Guid).ToString() -replace "-", "";
-$storageAccountName =  ("functionsample" + $uniqueAppendix).Substring(0,24)
-$storageContainerName = "samples-workitems"
+$storageInputContainerName = "samples-workitems"
+$storageOutputContainerName = "samples-workitems-outputs"
+$storageQueueTriggerName = "myqueue-items-sample"
+$storageQueueOutputName = "myqueue-items"
 $testdataFileName = "testdata.json";
 $testdataFilePath = "./" + $testdataFileName;
-$cosmosDBAccountName = ("functionsamples" + $uniqueAppendix).Substring(0,24);
 $cosmosDBName = "ToDoList";
 $cosmosDBCollectionName = "Items";
-$storageQueueName = "myqueue-items-sample"
+$resourceGroup = $group;
 
-#create resource group
-az group create -n $resourceGroup -l $location
-
-#create storage account
-az storage account create -n $storageAccountName -l $location -g $resourceGroup --sku Standard_LRS --kind StorageV2
+#storage account name
+$storageAccountName = (az storage account list --resource-group $resourceGroup --subscription "$subscription" | ConvertFrom-Json).name
 
 #get storage account connection string
-$storageAccountConnectionString = (az storage account show-connection-string -n $storageAccountName -g $resourceGroup | ConvertFrom-Json).connectionString
+$storageAccountConnectionString = (az storage account show-connection-string -n $storageAccountName -g $resourceGroup --subscription "$subscription" | ConvertFrom-Json).connectionString
 
 #create storage account containers
-az storage container create -n $storageContainerName --connection-string $storageAccountConnectionString
-az storage container create -n "samples-workitems-outputs" --connection-string $storageAccountConnectionString
+Write-Output "Creating storage containers..."
+az storage container create -n $storageInputContainerName --connection-string $storageAccountConnectionString
+az storage container create -n $storageOutputContainerName --connection-string $storageAccountConnectionString
 
 #upload test dat file
-az storage blob upload -n $testdataFileName -f $testdataFilePath -c $storageContainerName --connection-string $storageAccountConnectionString
+Write-Output "Uploading test file to blob storage..."
+az storage blob upload -n $testdataFileName -f $testdataFilePath -c $storageInputContainerName --connection-string $storageAccountConnectionString
 
 #create storage queues
-az storage queue create -n $storageQueueName --connection-string $storageAccountConnectionString
+Write-Output "Creating queue storage containers..."
+az storage queue create -n $storageQueueTriggerName --connection-string $storageAccountConnectionString
+az storage queue create -n $storageQueueOutputName --connection-string $storageAccountConnectionString
 
 #add a message to the queue
+Write-Output "Adding message to queue..."
 $encodedMessageContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($testdataFileName))
-az storage message put --content $encodedMessageContent --queue-name $storageQueueName --connection-string $storageAccountConnectionString
+az storage message put --content $encodedMessageContent --queue-name $storageQueueTriggerName --connection-string $storageAccountConnectionString
 
-#create the cosmos db 
-az cosmosdb create -n $cosmosDBAccountName -g $resourceGroup 
-$cosmosDBAccountKey = (az cosmosdb list-keys -n $cosmosDBAccountName -g $resourceGroup | ConvertFrom-Json).primaryMasterKey
+#get cosmos db connection parameters
+$cosmosDBAccountName = (az cosmosdb list --resource-group $resourceGroup --subscription "$subscription" | ConvertFrom-Json).name
+$cosmosDBAccountKey = (az cosmosdb list-keys -n $cosmosDBAccountName -g $resourceGroup --subscription "$subscription" | ConvertFrom-Json).primaryMasterKey
 
-#create database
-az cosmosdb database create -d $cosmosDBName -n $cosmosDBAccountName -g $resourceGroup
+#create cosmos db
+Write-Output "Creating CosmosDB database..."
+az cosmosdb database create -d $cosmosDBName -n $cosmosDBAccountName -g $resourceGroup --subscription "$subscription"
 
 #create collections
-az cosmosdb collection create -c $cosmosDBCollectionName -d $cosmosDBName -n $cosmosDBAccountName -g $resourceGroup
-az cosmosdb collection create -c "leases" -d $cosmosDBName -n $cosmosDBAccountName -g $resourceGroup
+Write-Output "Creating CosmosDB collection..."
+az cosmosdb collection create -c $cosmosDBCollectionName -d $cosmosDBName --partition-key-path '/id' -n $cosmosDBAccountName -g $resourceGroup --subscription "$subscription"
+az cosmosdb collection create -c "leases" -d $cosmosDBName -n $cosmosDBAccountName -g $resourceGroup --subscription "$subscription"
 
 #create cosmosdb connection string
 $cosmosDbConnectionString = "AccountEndpoint=https://" + $cosmosDBAccountName + ".documents.azure.com:443/;AccountKey=" + $cosmosDBAccountKey + ";"
 
 #generate local settings file
+Write-Output "Generating local settings file..."
 $settingsFileTemplate = Get-Content template.local.settings.json
 $settingsFileTemplate `
   -replace "{storageConnectionString}", $storageAccountConnectionString `
